@@ -77,12 +77,12 @@ const TRANSLATIONS_RESOURCES = {
 		resources_section_2_1_emote: "🖼️",
 		resources_section_2_1_title: "Profile picture project",
 		resources_section_2_1_desc: "",
-		resources_section_2_1_href: "https://raw.githubusercontent.com/KapturNaSluch/resources/refs/heads/main/visual/avatar.7z",
+		resources_section_2_1_href: "https://raw.githubusercontent.com/KapturNaSluch/resources/refs/heads/main/internal/visual/avatar.7z",
 
 		resources_section_2_2_emote: "📚",
 		resources_section_2_2_title: "External resources used",
 		resources_section_2_2_desc: "A curated collection of resources from other creators that I rely on or refer to in my work.",
-		resources_section_2_2_href: "https://github.com/KapturNaSluch/resoures/blob/main/external.md",
+		resources_section_2_2_href: "https://github.com/KapturNaSluch/resources/blob/main/external/list.md",
 	},
 
 	pl: {
@@ -106,12 +106,12 @@ const TRANSLATIONS_RESOURCES = {
 		resources_section_2_1_emote: "🖼️",
 		resources_section_2_1_title: "Projekt zdjęcia profilowego",
 		resources_section_2_1_desc: "",
-		resources_section_2_1_href: "https://raw.githubusercontent.com/KapturNaSluch/resources/refs/heads/main/visual/avatar.7z",
+		resources_section_2_1_href: "https://raw.githubusercontent.com/KapturNaSluch/resources/refs/heads/main/internal/visual/avatar.7z",
 
 		resources_section_2_2_emote: "📚",
 		resources_section_2_2_title: "Użyte zasoby zewnętrzne",
 		resources_section_2_2_desc: "Wybrany zbiór zasobów innych twórców, na których polegam bądź do których odnoszę się w swoich pracach.",
-		resources_section_2_2_href: "https://github.com/KapturNaSluch/resoures/blob/main/external.md",
+		resources_section_2_2_href: "https://github.com/KapturNaSluch/resources/blob/main/external/list.md",
 	},
 };
 
