@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-scope="resources">
+	<head>
+		<!-- Meta -->
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+		<title>KapturNaSłuch</title>
+		<link rel="icon" type="image/png" href="../assets/resources/img/png/icon.png"/>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="../assets/code/css/fonts.css"/>
+		<link rel="stylesheet" href="../assets/code/css/style.css"/>
+	</head>
+	<body>
+		<nav id="top"></nav>
+
+		<div class="page-header">
+			<h1 data-i18n="resources_page_title" style="text-decoration: capitalize"></h1>
+			<p data-i18n="res_hero_desc" style="text-decoration: capitalize"></p>
+		</div>
+
+		<main class="content"></main>
+
+		<footer id="bottom"></footer>
+
+		<script src="../assets/code/js/utils.js"></script>
+		<script src="../assets/code/js/emoji.js"></script>
+		<script src="../assets/code/js/components.js"></script>
+		<script src="../assets/code/js/i18n.js"></script>
+		<script src="../assets/code/js/locale.js"></script>
+		<script src="../assets/code/js/populate.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				loadComponent("#top", "../assets/code/html/header.html", "../", applyTranslations);
+				loadComponent("#bottom", "../assets/code/html/footer.html", "../", applyTranslations);
+
+				setDocumentTitle();
+			});
+		</script>
+	</body>
+</html>

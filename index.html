@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-scope="index">
+	<head>
+		<!-- Meta -->
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+		<title>KapturNaSluch</title>
+		<link rel="icon" type="image/png" href="assets/resources/img/png/icon.png"/>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="assets/code/css/fonts.css"/>
+		<link rel="stylesheet" href="assets/code/css/style.css"/>
+	</head>
+	<body>
+		<nav id="top" style="background: initial; position: fixed"></nav>
+
+		<div class="background">
+			<div class="background-media">
+				<video autoplay loop muted playsinline>
+					<source src="assets/resources/vid/mp4/1.mp4" type="video/mp4"/>
+				</video>
+			</div>
+		</div>
+
+		<main>
+			<section class="hero">
+				<div class="hero-header">
+					<img src="assets/resources/img/png/icon.png" class="hero-avatar" alt="KapturNaSluch"/>
+					<h1 class="hero-name">Kaptur<span class="accent-word">Na</span>Słuch</h1>
+				</div>
+				<p class="hero-taglines">
+					<span data-i18n="hero_tagline1"></span>
+					<span data-i18n="hero_tagline2"></span>
+				</p>
+				<p class="hero-desc" data-i18n="hero_desc"></p>
+				<a href="#footer" class="btn-primary" data-i18n="hero_cta"></a>
+			</section>
+		</main>
+
+		<footer id="footer"></footer>
+
+		<script src="assets/code/js/utils.js"></script>
+		<script src="assets/code/js/emoji.js"></script>
+		<script src="assets/code/js/components.js"></script>
+		<script src="assets/code/js/i18n.js"></script>
+		<script src="assets/code/js/locale.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				loadComponent("#top", "assets/code/html/header.html", "", applyTranslations);
+				loadComponent("#footer", "assets/code/html/footer.html", "", applyTranslations);
+
+				setDocumentTitle();
+			});
+		</script>
+	</body>
+</html>

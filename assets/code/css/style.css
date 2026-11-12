@@ -1,0 +1,837 @@
+/* ===== */
+/* 1. Design tokens
+/* ===== */
+
+@property --color-accent-hue {
+	syntax: "<number>";
+	initial-value: 0;
+	inherits: true;
+}
+
+:root {
+	--bpm: 135;
+	--beat: calc(60s / var(--bpm));
+	--bar:  calc(var(--beat) * 4);
+	--time-transition: var(--bar);
+
+	--color-accent-hue: 0;
+
+	--color-background-1: #000;
+	--color-background-2: #111;
+	--color-background-3: #222;
+	--color-text-default: #EEE;
+	--color-text-muted: #DDD;
+	--color-border: #333;
+
+	--color-accent: oklch(75% 0.125 var(--color-accent-hue));
+	--color-accent-dim: oklch(75% 0.1 var(--color-accent-hue) / 0.15);
+
+	--radius-border: 8px;
+
+	--time-theme: 2s;
+	--time-hover: 0.15s;
+	--time-icon: 0.2s;
+
+	--filter-formula-1: invert(48%) sepia(79%) saturate(2476%) hue-rotate(317deg) brightness(118%) contrast(119%);
+
+	/* Measured by JS in components.js - do not hardcode elsewhere */
+	--height-navigation: 100px;
+}
+
+[data-theme="light"] {
+	--time-transition: calc(var(--bar) * 1.5);
+
+	--color-background-1: #F4F4F8;
+	--color-background-2: #FFFFFF;
+	--color-background-3: #EAEAEF;
+	--color-text-default: #121118;
+	--color-text-muted: #5C5B6F;
+	--color-border: #D8D7E2;
+
+	--color-accent: oklch(55% 0.18 var(--color-accent-hue));
+	--color-accent-dim: oklch(55% 0.18 var(--color-accent-hue) / 0.15);
+}
+
+/* ===== */
+/* 2. Reset
+/* ===== */
+
+*,
+*::before,
+*::after {
+	scroll-behavior: smooth;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+
+	transition:
+		background-color var(--time-theme) ease,
+		border-color     var(--time-theme) ease,
+		box-shadow       var(--time-theme) ease;
+}
+
+/* ===== */
+/* 3. Base
+/* ===== */
+
+@keyframes animateHue {
+	0%   { --color-accent-hue: 0;   animation-timing-function: cubic-bezier(0, 0, 0, 1); }
+	25%  { --color-accent-hue: 90;  animation-timing-function: cubic-bezier(0, 0, 0, 1); }
+	50%  { --color-accent-hue: 180; animation-timing-function: cubic-bezier(0, 0, 0, 1); }
+	75%  { --color-accent-hue: 270; animation-timing-function: cubic-bezier(0, 0, 0, 1); }
+	100% { --color-accent-hue: 360; }
+}
+
+html {
+	scroll-padding-top: var(--height-navigation);
+	transition: none;
+	animation: animateHue var(--time-transition) infinite;
+}
+
+body {
+	background: var(--color-background-1);
+	color: var(--color-text-default);
+	font-family: "Inter", sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.background {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: -5;
+}
+
+.background-media {
+	position: absolute;
+	inset: 0;
+	opacity: 0.25;
+	filter: blur(5px) saturate(0); /*hue-rotate(calc(1deg * var(--color-accent-hue)));*/
+}
+
+.background-media video,
+.background-media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ===== */
+/* 4. Shared components
+/* ===== */
+
+/* Two-tone wordmark - used in navbar, footer, anywhere else */
+.logo {
+	font-family: "Space Grotesk", sans-serif;
+	font-weight: 700;
+	font-size: 1.1rem;
+	color: var(--color-text-default);
+	letter-spacing: -0.02em;
+}
+
+.logo span {
+	color: var(--color-accent);
+}
+
+.logo--lg {
+	font-size: 1.2rem;
+}
+
+/* Flag icon inside language toggle */
+.btn-flag-icon {
+	width: 1.2em;
+	height: 1.2em;
+	vertical-align: -0.2em;
+	display: inline-block;
+	object-fit: contain;
+}
+
+/* Emoji rendered through Twemoji */
+.emoji-wrapper {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: -0.2em;
+	width: 1.2em;
+	height: 1.2em;
+	margin: 0 0.1em;
+}
+
+.emoji-wrapper img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+/* Icon inversion - only for fixed-color raster assets on dark theme */
+[data-theme="dark"] .social-icon img,
+[data-theme="dark"] .emoji-wrapper img {
+	filter: invert(1);
+}
+
+/* ===== */
+/* 5. Navbar
+/* ===== */
+
+nav {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	padding: 0 2.5rem;
+	height: var(--height-navigation);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: var(--color-background-3);
+	backdrop-filter: blur(2em) hue-rotate(180deg);
+	width: 100%;
+}
+
+.nav-brand {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	text-decoration: none;
+	filter: drop-shadow(0 0 1px var(--color-background-1));
+}
+
+.nav-logo-img {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	border: 1px solid var(--color-accent);
+	border-radius: 100%;
+	aspect-ratio: 1 / 1;
+	padding-top: 0.1875em;
+}
+
+.nav-controls {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	filter: drop-shadow(0 0 1px var(--color-background-1));
+}
+
+.nav-links {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	list-style: none;
+	text-transform: capitalize;
+}
+
+.nav-links li {
+	display: inline-flex;
+}
+
+.nav-links a {
+	color: var(--color-text-muted);
+	text-decoration: none;
+	font-size: 0.9rem;
+	font-weight: 500;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+
+	/* Fast hover color, but theme switches still fade over 2s for other props */
+	transition:
+		background-color var(--time-theme) ease-in-out,
+		border-color     var(--time-theme) ease-in-out,
+		fill             var(--time-theme) ease-in-out,
+		stroke           var(--time-theme) ease-in-out,
+		box-shadow       var(--time-theme) ease-in-out,
+		color            var(--time-hover) ease-in-out;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+	color: var(--color-text-default);
+}
+
+/* Let the anchor's color transition drive the SVG (stroke: currentColor) */
+.nav-links a svg,
+.nav-links a svg * {
+	transition: none;
+}
+
+.nav-link-icon {
+	display: inline-flex;
+	align-items: center;
+	opacity: 0;
+	max-width: 0;
+	overflow: hidden;
+	transition:
+		opacity   var(--time-icon) ease-in-out,
+		max-width var(--time-icon) ease-in-out;
+}
+
+.nav-links a:hover .nav-link-icon {
+	opacity: 1;
+	max-width: 1.2em;
+}
+
+.nav-toggle-btn {
+	display: none;
+	color: var(--text);
+	border: none;
+	border-radius: var(--radius);
+	font-size: 2rem;
+	cursor: pointer;
+
+	/* Center the icon */
+	line-height: 1;
+	background: transparent;
+}
+
+.toggle-icon {
+	display: inline-flex;
+	align-items: center;
+}
+
+.btn-toggle {
+	color: var(--color-text-default);
+	font-size: 2em;
+	cursor: pointer;
+	display: inline-flex;
+
+	transition:
+		background-color var(--time-theme) ease-in-out,
+		border-color     var(--time-hover) ease-in-out,
+		color            var(--time-hover) ease-in-out;
+
+	aspect-ratio: 1 / 1;
+	background: none;
+	border: 0;
+}
+
+.btn-toggle:hover {
+	border-color: var(--color-accent);
+	color: var(--color-text-default);
+}
+
+/* ===== */
+/* 6. Layout - main / sections
+/* ===== */
+
+main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+/* First main section: viewport minus header */
+main > .hero {
+	min-height: 100vh;
+	padding: 5rem 2rem;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 5;
+}
+
+
+/* Other full-height sections: viewport minus header minus footer */
+
+
+/* ===== */
+/* 7. Hero
+/* ===== */
+
+.hero-header {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin-bottom: 0.5em;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.hero-avatar {
+	width: 80px;
+	height: auto;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid var(--color-accent);
+	padding-top: 0.5em;
+	aspect-ratio: 1 / 1;
+	filter: drop-shadow(0 0 3em var(--color-accent));
+	background: var(--color-background-1);
+}
+
+.hero-name {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: clamp(2.5rem, 8vw, 5rem);
+	font-weight: 700;
+	line-height: 1.0;
+	letter-spacing: -0.04em;
+	color: var(--color-text-default);
+}
+
+.hero-name .accent-word {
+	color: var(--color-accent);
+}
+
+.hero-taglines {
+	font-size: 0;
+	font-family: "Space Grotesk", sans-serif;
+	font-weight: 500;
+	color: var(--color-text-muted);
+	gap: 0;
+}
+
+.hero-taglines span {
+	font-size: clamp(1rem, 2.5vw, 1.3rem);
+}
+
+.hero-taglines span:not(:last-child)::before {
+	display: none;
+}
+
+.hero-taglines span:not(:last-child)::after {
+	content: "│";
+	padding: 0 0.5em;
+}
+
+.hero-desc {
+	font-size: 1rem;
+	color: var(--color-text-muted);
+	margin: 2em 0;
+	text-align: center;
+}
+
+.btn-primary {
+	display: inline-block;
+	background: var(--color-accent);
+	color: var(--color-background-1);
+	text-decoration: none;
+	padding: 0.7rem 1.6rem;
+	border-radius: var(--radius-border);
+	font-family: "Space Grotesk", sans-serif;
+	font-weight: 700;
+	font-size: 0.95rem;
+
+	transition:
+		background-color var(--time-theme) ease-in-out,
+		color            var(--time-theme) ease-in-out,
+		opacity          var(--time-hover) ease-in-out;
+}
+
+.btn-primary:hover {
+	opacity: 0.85;
+}
+
+.theme-icon.is-loading,
+.lang-icon.is-loading {
+	visibility: hidden;
+}
+
+.btn-toggle .theme-icon,
+.btn-toggle .lang-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.2em;
+	height: 1.2em;
+}
+
+.btn-toggle .theme-icon svg,
+.btn-toggle .theme-icon img,
+.btn-toggle .lang-icon svg,
+.btn-toggle .lang-icon img {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.btn-toggle .theme-icon svg {
+	filter: var(--filter-formula-1) saturate(0.325) brightness(2) hue-rotate(calc(1deg * var(--color-accent-hue)));
+}
+
+/* ===== */
+/* 8. Content sections
+/* ===== */
+
+
+
+.page-header {
+	padding: 4rem 2rem 3rem;
+	max-width: 900px;
+	margin: 0 auto;
+	width: 100%;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.page-header h1 {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: clamp(2rem, 6vw, 3.5rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	margin-bottom: 0.75rem;
+	text-transform: capitalize;
+}
+
+.page-header p {
+	color: var(--color-text-muted);
+	font-size: 1rem;
+}
+
+.content {
+	flex: 1;
+	padding: 3rem 2rem;
+	max-width: 900px;
+	margin: 0 auto;
+	width: 100%;
+}
+
+/* ===== */
+/* 9. Resources grid
+/* ===== */
+
+.cat-section {
+	margin-bottom: 3.5rem;
+}
+
+.cat-label {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-accent);
+	margin-bottom: 1.2rem;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.cat-label:hover {
+	text-decoration: underline;
+}
+
+.cat-label::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--color-border);
+}
+
+.res-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.res-card {
+	flex: 1 1 calc(50% - 0.5rem);
+	min-width: 250px;
+	display: flex;
+	flex-direction: column;
+	background: var(--color-background-2);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-border);
+	padding: 1.25rem;
+	text-decoration: none;
+	color: inherit;
+
+	transition:
+		background-color var(--time-theme) ease-in-out,
+		border-color     var(--time-hover) ease-in-out;
+}
+
+.res-card:hover {
+	border-color: var(--color-accent);
+	background: var(--color-background-3);
+}
+
+.res-card-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin-bottom: 0.6rem;
+}
+
+.res-icon {
+	font-size: 1.3rem;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	filter: initial !important;
+}
+
+.res-icon-img {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	display: block;
+	flex: 0 0 auto;
+}
+
+.badge-new {
+	font-size: 0.65rem;
+	font-family: "Space Grotesk", sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	background: var(--color-accent-dim);
+	color: var(--color-accent);
+	padding: 2px 7px;
+	border-radius: 4px;
+}
+
+.res-card .res-title {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--color-text-default);
+}
+
+.res-card .res-desc:last-child {
+	padding-top: 1em;
+}
+
+.res-card .res-desc {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	line-height: 1.55;
+	flex: 1;
+}
+
+/* ===== */
+/* 10. Footer
+/* ===== */
+
+footer {
+	border-top: 1px solid var(--color-border);
+	padding: 3rem 2rem;
+	background: var(--color-background-2);
+}
+
+.footer-inner {
+	max-width: 900px;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	gap: 2rem;
+	flex-wrap: wrap;
+}
+
+/* Footer uses .logo + .logo--lg + this layout rule for spacing */
+footer .logo--lg {
+	margin-bottom: 0.5rem;
+}
+
+.footer-copy {
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+	margin-top: 0.5rem;
+}
+
+.socials-title {
+	font-family: "Space Grotesk", sans-serif;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-text-muted);
+	margin-bottom: 1rem;
+}
+
+.social-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.social-list li a {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	text-decoration: none;
+	color: var(--color-text-muted);
+	font-size: 0.9rem;
+
+	transition:
+		background-color var(--time-theme) ease-in-out,
+		color            var(--time-hover) ease-in-out;
+}
+
+.social-list li a:hover {
+	color: var(--color-text-default);
+}
+
+.social-icon {
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: var(--color-background-3);
+}
+
+.social-icon img {
+	width: 1em;
+	display: block;
+}
+
+.social-icon svg {
+	filter: var(--filter-formula-1) contrast(0.25) hue-rotate(calc(1deg * var(--color-accent-hue)));
+	width: 1.5em;
+	height: 1.5em;
+}
+
+.social-icon:hover svg {
+	filter: var(--filter-formula-1) contrast(0.5) hue-rotate(calc(1deg * var(--color-accent-hue)));
+}
+
+.social-column {
+	display: flex;
+	flex-flow: column;
+	align-items: end;
+}
+
+/* ===== */
+/* 11. About section
+/* ===== */
+
+.interview .cat-section > details.qa + details.qa {
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: 1px solid var(--color-border);
+}
+
+details.qa {
+	margin: 0;
+}
+
+.qa ol,
+.qa ul {
+	list-style-position: revert-layer;
+	margin-left: 2.75em;
+}
+
+details.qa > summary.qa-q {
+	list-style: none;
+	cursor: pointer;
+	font-style: italic;
+	font-weight: 500;
+	color: var(--color-text-default);
+	display: flex;
+	align-items: baseline;
+	gap: 0.5em;
+	transition: color var(--time-hover) ease-in-out;
+}
+
+details.qa > summary.qa-q::-webkit-details-marker {
+	display: none;
+}
+
+details.qa > summary.qa-q::marker {
+	content: "";
+}
+
+/* Chevron */
+details.qa > summary.qa-q::before {
+	content: "";
+	display: inline-flex;
+	width: 0.75em;
+	height: 0.75em;
+	border-right: 3px solid var(--color-accent);
+	border-bottom: 3px solid var(--color-accent);
+	transform: rotate(-45deg);
+	transition: transform var(--time-icon) ease-in-out;
+	margin-right: 0.5em;
+	transform-origin: 60% 60%;
+	align-self: center;
+}
+
+details.qa[open] > summary.qa-q::before {
+	transform: rotate(45deg);
+}
+
+/* Answer body */
+details.qa > .qa-a {
+	padding-top: 0.75em;
+	color: var(--color-text);
+}
+
+
+.blockquote {
+	border-left: 0.25em solid var(--color-text-default);
+	font-style: italic;
+	text-indent: initial;
+	padding: 1.25em;
+	text-align: left;
+	display: flex;
+	flex-flow: column;
+	gap: 2em;
+	opacity: 0.8;
+}
+
+.blockquote span:last-child {
+	display: block;
+  text-align: right;	
+}
+
+/* ===== */
+/* 12. Mobile
+/* ===== */
+
+@media (max-width: 750px) {
+	nav {
+		padding: 2em;
+		flex-wrap: wrap;
+		height: auto;
+		background: var(--color-background-2);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.nav-toggle-btn {
+		display: inline-block;
+	}
+
+	.nav-controls {
+		width: 100%;
+		display: none;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.nav-controls.active {
+		display: flex;
+	}
+
+	.nav-links {
+		flex-direction: column;
+		align-items: start;
+		gap: 1rem;
+		width: 100%;
+		padding-top: 1rem;
+	}
+
+	.res-card  { flex: 1 1 100%; }
+	.hero      { padding: 3rem 1rem 2rem; }
+	footer     { padding: 2rem 1rem; }
+
+	.footer-inner {
+		flex-direction: column-reverse;
+		align-items: center;
+		text-align: center;
+	}
+
+	.social-column {
+		align-items: center;
+	}
+}
